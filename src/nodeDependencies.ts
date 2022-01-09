@@ -19,19 +19,28 @@ export class NodeDependenciesProvider implements vscode.TreeDataProvider<Depende
 	}
 
 	clean(): void {
-		Object.entries(this.context.globalState.keys()).forEach(([i,v]) => {
+		Object.entries(this.context.globalState.keys()).forEach(([i, v]) => {
 			this.context.globalState.update(v, undefined);
 		})
 		this.refresh();
+		vscode.window.showInformationMessage('Cleaned!');
 	}
 
 	copy(): void {
+		var entry_keys = this.context.globalState.keys();
 		var clipboard = '';
-		Object.entries(this.context.globalState.keys()).forEach(([i,v]) => {
-			clipboard += this.context.globalState.get(v);
-			clipboard += '\n';
-		})
-		ncp.copy(clipboard);
+
+		if (entry_keys.length > 0) {
+			Object.entries(entry_keys).forEach(([i, v]) => {
+				clipboard += this.context.globalState.get(v);
+				clipboard += '\n';
+			})
+			ncp.copy(clipboard);
+			vscode.window.showInformationMessage('Copied!');
+		} else {
+			vscode.window.showInformationMessage('Nothing to copy!');
+		}
+
 	}
 
 	getTreeItem(element: Dependency): vscode.TreeItem {
@@ -82,12 +91,12 @@ export class NodeDependenciesProvider implements vscode.TreeDataProvider<Depende
 		const devEntries = this.context.globalState._value
 			? Object.keys(this.context.globalState._value).map(dep =>
 				toDep(dep, this.context.globalState._value[dep])
-				)
-				: [];
-		
+			)
+			: [];
+
 		return devEntries;
 	}
-	
+
 	/**
 	 * Given the path to package.json, read all its dependencies and devDependencies.
 	 */
