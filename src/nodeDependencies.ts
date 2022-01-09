@@ -47,6 +47,10 @@ export class NodeDependenciesProvider implements vscode.TreeDataProvider<Depende
 
 	}
 
+	editEntry(element: Dependency) {
+		console.log('de');
+	}
+
 	getTreeItem(element: Dependency): vscode.TreeItem {
 		return element;
 	}

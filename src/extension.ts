@@ -35,7 +35,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	
 	// change selected text
-	const disposable = vscode.commands.registerCommand('lang-helper.makeLang', function () {
+	var disposable = vscode.commands.registerCommand('lang-helper.makeLang', function () {
 		// Get the active text editor
 		const editor = vscode.window.activeTextEditor;
 
@@ -58,6 +58,33 @@ export function activate(context: vscode.ExtensionContext): void {
 
 			editor.edit(editBuilder => {
 				editBuilder.replace(selection, output['final_word']);
+			});
+		}
+	});
+
+	var disposable = vscode.commands.registerCommand('lang-helper.makeLangRaw', function () {
+		// Get the active text editor
+		const editor = vscode.window.activeTextEditor;
+
+		if (editor) {
+			const document = editor.document;
+			const selection = editor.selection;
+
+			// Get the word within the selection
+			const word = document.getText(selection);
+
+			// const output = processText(word);
+			const output = processText(word, true, 7);
+
+			// save it to global state			
+			context.globalState.update(output['lang_key'], output['lang_output']);
+
+			// Let's refresh menu here
+			nodeDependenciesProvider.refresh();
+
+
+			editor.edit(editBuilder => {
+				editBuilder.replace(selection, output['final_word_raw']);
 			});
 		}
 	});

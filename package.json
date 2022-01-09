@@ -13,6 +13,7 @@
 	],
 	"activationEvents": [
 		"onCommand:lang-helper.makeLang",
+		"onCommand:lang-helper.makeLangRaw",
 		"onView:nodeDependencies"
 	],
 	"main": "./dist/extension.js",
@@ -21,6 +22,10 @@
 			{
 				"command": "lang-helper.makeLang",
 				"title": "Make Lang"
+			},
+			{
+				"command": "lang-helper.makeLangRaw",
+				"title": "Make Lang Raw"
 			},
 			{
 				"command": "nodeDependencies.refreshEntry",
@@ -82,11 +87,7 @@
 					"command": "nodeDependencies.editEntry",
 					"when": "view == nodeDependencies && viewItem == dependency",
 					"group": "inline"
-				},
-				{
-					"command": "nodeDependencies.deleteEntry",
-					"when": "view == nodeDependencies && viewItem == dependency"
-				}
+				}				
 			]
 		},
 		"viewsContainers": {

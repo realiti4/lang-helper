@@ -44,7 +44,7 @@ export function processText(input: string, long_text: boolean = false, slice_by:
     var output = {
         'lang_key': new_word,
         'final_word': "<?=lang('" + new_word + "')?>",
-        'final_word_in_php': "lang('" + new_word + "')",
+        'final_word_raw': "lang('" + new_word + "')",
         'lang_output': '$lang["' + new_word + '"] = "' + input + '";'
     }
 
