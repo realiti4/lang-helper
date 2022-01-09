@@ -13,17 +13,15 @@ var ncp = require("copy-paste");
 
 export function activate(context: vscode.ExtensionContext): void {
 	
-	console.log('Congratulations, your extension "lang-helper" is now active!');
-
 	// load existing extension test
 	let allExts = vscode.extensions.all;
 	let phpExt = vscode.extensions.getExtension('vscode.php');
 	// let importedApi = phpExt.exports;
-	console.log('karakara');
+	// console.log('karakara');
 	
 	
 	// Tree view - Dev
-	const nodeDependenciesProvider = new NodeDependenciesProvider(vscode.workspace.rootPath, context);
+	const nodeDependenciesProvider = new NodeDependenciesProvider(context);
 	vscode.window.registerTreeDataProvider('nodeDependencies', nodeDependenciesProvider);
 	vscode.commands.registerCommand('nodeDependencies.refreshEntry', () =>
 		nodeDependenciesProvider.refresh()
@@ -48,7 +46,8 @@ export function activate(context: vscode.ExtensionContext): void {
 			// Get the word within the selection
 			const word = document.getText(selection);
 
-			const output = processText(word);
+			// const output = processText(word);
+			const output = processText(word, true, 7);
 
 			// save it to global state			
 			context.globalState.update(output['lang_key'], output['lang_output']);

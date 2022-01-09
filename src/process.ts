@@ -1,7 +1,14 @@
 
 
+function checkLongText(input: string, slice_by: number = 7): string {
+    var text_array = input.split(' ');
+    var sliced = text_array.slice(0, slice_by);
+    sliced.push('longtext');
 
-export function processText(input: string) {
+    return sliced.join(' ');
+}
+
+export function processText(input: string, long_text: boolean = false, slice_by: number = 7) {
 
     // Dev - make this better
     var new_word = input.toLowerCase();
@@ -15,7 +22,14 @@ export function processText(input: string) {
     // remove first and last space
     var new_word = new_word.trim();
     // replace multiple white space with one    
-    var new_word = new_word.replace(/\s{2,}/g, ' ');    
+    var new_word = new_word.replace(/\s{2,}/g, ' ');
+    
+    // Check long text
+    if (long_text) {
+        var new_word = checkLongText(new_word, slice_by);
+    }
+    
+    // Final form
     var new_word = new_word.replace(/ /g, '.');
 
     // var final_word = "<?=lang('${new_word}')?>";
