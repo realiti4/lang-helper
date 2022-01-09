@@ -1,5 +1,5 @@
 {
-  "name": "lang-helper",
+	"name": "lang-helper",
 	"displayName": "lang_helper",
 	"description": "",
 	"version": "0.0.1",
@@ -10,7 +10,8 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:lang-helper.makeLang"
+		"onCommand:lang-helper.makeLang",
+		"onView:nodeDependencies"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
@@ -18,8 +19,44 @@
 			{
 				"command": "lang-helper.makeLang",
 				"title": "Make Lang"
+			},
+			{
+				"command": "nodeDependencies.refreshEntry",
+				"title": "Refresh",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/dark/refresh.svg"
+				}
 			}
-		]
+		],
+		"views": {
+			"package-explorer": [
+				{
+				  "id": "nodeDependencies",
+				  "name": "Node Dependencies",
+				  "icon": "media/dep.svg",
+				  "contextualTitle": "Package Explorer"
+				}
+			  ]
+		},
+		"menus": {
+			"view/title": [
+				{
+					"command": "nodeDependencies.refreshEntry",
+					"when": "view == nodeDependencies",
+					"group": "navigation"
+				}
+			]
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "package-explorer",
+					"title": "Package Explorer",
+					"icon": "media/dep.svg"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run package",

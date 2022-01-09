@@ -2,49 +2,41 @@ import * as vscode from 'vscode';
 import { subscribeToDocumentChanges, EMOJI_MENTION } from './diagnostics';
 
 const COMMAND = 'code-actions-sample.command';
-const util = require('util');
+import util = require('util');
 
 
-// test2
-const tokenTypes = ['class', 'interface', 'enum', 'function', 'variable'];
-const tokenModifiers = ['declaration', 'documentation'];
-const legend = new vscode.SemanticTokensLegend(tokenTypes, tokenModifiers);
+import { NodeDependenciesProvider } from './nodeDependencies';
 
-const provider: vscode.DocumentSemanticTokensProvider = {
-	provideDocumentSemanticTokens(
-		document: vscode.TextDocument
-	): vscode.ProviderResult<vscode.SemanticTokens> {
-		// analyze the document and return semantic tokens
 
-		const tokensBuilder = new vscode.SemanticTokensBuilder(legend);
-		// on line 1, characters 1-5 are a class declaration
-		tokensBuilder.push(
-			new vscode.Range(new vscode.Position(1, 1), new vscode.Position(1, 5)),
-			'class',
-			['declaration']
-		);
-		return tokensBuilder.build();
-	}
-};
 
 export function activate(context: vscode.ExtensionContext): void {
 	
 	console.log('Congratulations, your extension "lang-helper" is now active!');
 
+	// load existing extension test
 	let allExts = vscode.extensions.all;
 	let phpExt = vscode.extensions.getExtension('vscode.php');
 	// let importedApi = phpExt.exports;
 	console.log('karakara');
+	
+	
+	// Tree view - Dev
+	const nodeDependenciesProvider = new NodeDependenciesProvider(vscode.workspace.rootPath);
+	vscode.window.registerTreeDataProvider('nodeDependencies', nodeDependenciesProvider);
+	vscode.commands.registerCommand('nodeDependencies.refreshEntry', () =>
+		nodeDependenciesProvider.refresh()
+	);
 
-	// another test
-	let editor = vscode.window.activeTextEditor;
+	// vscode.window.registerTreeDataProvider(
+	// 	'nodeDependencies',
+	// 	new NodeDependenciesProvider(vscode.workspace.rootPath)
+	// );
+	// vscode.window.createTreeView('nodeDependencies', {
+	// 	treeDataProvider: new NodeDependenciesProvider(vscode.workspace.rootPath)
+	// });
 
-	if (editor) {
-		const text = editor.document.getText();
-		let selection = editor.selection;
-		var text_sample = editor.document.getText(selection);
-	}	
-
+	
+	
 	// change selected text
 	const disposable = vscode.commands.registerCommand('lang-helper.makeLang', function () {
 		// Get the active text editor
@@ -58,7 +50,7 @@ export function activate(context: vscode.ExtensionContext): void {
 			const word = document.getText(selection);
 			const reversed = word.split('').reverse().join('');
 
-			// Dev
+			// Dev - make this better
 			var new_word = word.toLowerCase();
 			// remove turkish characters
 			var new_word = new_word.replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ş/g, 's').replace(/ü/g, 'u');
@@ -75,7 +67,7 @@ export function activate(context: vscode.ExtensionContext): void {
 			// copy to clipboard
 			// require('child_process').spawn('clip').stdin.end(util.inspect(word));
 			var lang_output = '$lang["' + new_word + '"] = "' + word +'";';
-			require('child_process').spawn('clip').stdin.end(lang_output);
+			require('child_process').spawn('clip').stdin.end(lang_output);	// fix utf-8
 
 
 			editor.edit(editBuilder => {
