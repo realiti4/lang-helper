@@ -6,6 +6,7 @@ import util = require('util');
 
 
 import { NodeDependenciesProvider } from './nodeDependencies';
+import { processText } from './process';
 // import clipboard from 'clipboardy';
 var ncp = require("copy-paste");
 
@@ -34,15 +35,6 @@ export function activate(context: vscode.ExtensionContext): void {
 		nodeDependenciesProvider.copy()
 	);
 
-	// vscode.window.registerTreeDataProvider(
-	// 	'nodeDependencies',
-	// 	new NodeDependenciesProvider(vscode.workspace.rootPath)
-	// );
-	// vscode.window.createTreeView('nodeDependencies', {
-	// 	treeDataProvider: new NodeDependenciesProvider(vscode.workspace.rootPath)
-	// });
-
-	
 	
 	// change selected text
 	const disposable = vscode.commands.registerCommand('lang-helper.makeLang', function () {
@@ -55,44 +47,18 @@ export function activate(context: vscode.ExtensionContext): void {
 
 			// Get the word within the selection
 			const word = document.getText(selection);
-			const reversed = word.split('').reverse().join('');
 
-			// Dev - make this better
-			var new_word = word.toLowerCase();
-			// remove turkish characters
-			var new_word = new_word.replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ş/g, 's').replace(/ü/g, 'u');
-			// replace multiple white space with one
-			var new_word = new_word.replace(/\s{2,}/g, ' ');
-			var new_word = new_word.replace(/ /g,'.');
-
-			// var final_word = "<?=lang('${new_word}')?>";
-			var group = 'general.';
-			var new_word = group + new_word;
-			var final_word = "<?=lang('" + new_word + "')?>";
-			var final_word_in_php = "lang('" + new_word + "')";
-
-
-			// copy to clipboard
-			// require('child_process').spawn('clip').stdin.end(util.inspect(word));
-			var lang_output = '$lang["' + new_word + '"] = "' + word +'";';
-			// require('child_process').spawn('clip').stdin.end(lang_output);	// fix utf-8
-			// clipboard.write(lang_output);
-			var array_test = ['karakara', 'onur'];
-			var other_test = 'karakara\nonur';
-			// ncp.copy(other_test);
+			const output = processText(word);
 
 			// save it to global state			
-			context.globalState.update(new_word, lang_output);
-			console.log(context.globalState.keys())
-			// context.globalState.update(new_word, undefined); // delete
+			context.globalState.update(output['lang_key'], output['lang_output']);
 
 			// Let's refresh menu here
 			nodeDependenciesProvider.refresh();
-			// nodeDependenciesProvider.clean();
 
 
 			editor.edit(editBuilder => {
-				editBuilder.replace(selection, final_word);
+				editBuilder.replace(selection, output['final_word']);
 			});
 		}
 	});
