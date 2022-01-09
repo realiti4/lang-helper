@@ -1,6 +1,6 @@
 # lang-helper README
 
-This is the README for your extension "lang-helper". After writing up a brief description, we recommend including the following sections.
+Converts text into codeigniter lang format. You can later copy every entry into your language file in the right format
 
 ## Features
 

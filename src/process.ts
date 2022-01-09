@@ -3,7 +3,10 @@
 function checkLongText(input: string, slice_by: number = 7): string {
     var text_array = input.split(' ');
     var sliced = text_array.slice(0, slice_by);
-    sliced.push('longtext');
+
+    if (text_array.length > slice_by){
+        sliced.push('longtext');
+    }
 
     return sliced.join(' ');
 }

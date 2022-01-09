@@ -58,6 +58,18 @@ export class NodeDependenciesProvider implements vscode.TreeDataProvider<Depende
 
 	}
 
+	private makedict() {
+		var entry_keys = this.context.globalState.keys();
+		var entry_dict: any = {};
+
+		if (entry_keys.length > 0) {
+			Object.entries(this.context.globalState.keys()).forEach(([i, v]) => {
+				entry_dict[v] = this.context.globalState.get(v);
+			});
+
+		}
+		return entry_dict;
+	}
 
 	private getstateEntries(): Dependency[] {
 		// const toDep = (moduleName: string, version: string): Dependency => {
@@ -77,9 +89,11 @@ export class NodeDependenciesProvider implements vscode.TreeDataProvider<Depende
 			return new Dependency(moduleName, version, vscode.TreeItemCollapsibleState.None);
 		}
 
-		const devEntries = this.context.globalState._value
-			? Object.keys(this.context.globalState._value).map(dep =>
-				toDep(dep, this.context.globalState._value[dep])
+		var entry_dict = this.makedict();
+
+		const devEntries = entry_dict
+			? Object.keys(entry_dict).map(dep =>
+				toDep(dep, entry_dict[dep])
 			)
 			: [];
 
