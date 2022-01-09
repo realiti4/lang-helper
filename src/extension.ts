@@ -66,5 +66,5 @@ export function activate(context: vscode.ExtensionContext): void {
 
 }
 
-// this method is called when your extension is deactivated
-export function deactivate() {}
+// // this method is called when your extension is deactivated
+// export function deactivate() {}

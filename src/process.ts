@@ -21,6 +21,7 @@ export function processText(input: string, long_text: boolean = false, slice_by:
     var new_word = new_word.replace(/,/g, ' ');
     var new_word = new_word.replace(/:/g, ' ');
     var new_word = new_word.replace(/;/g, ' ');
+    var new_word = new_word.replace(/\//g, ' ');
     
     // remove first and last space
     var new_word = new_word.trim();

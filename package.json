@@ -1,8 +1,10 @@
 {
 	"name": "lang-helper",
-	"displayName": "lang_helper",
-	"description": "",
-	"version": "0.0.1",
+	"displayName": "Codeigniter Lang Helper",
+	"description": "Lang Helper",
+	"version": "0.1.0",
+	"publisher": "realiti",
+	"repository": "https://github.com/realiti4/lang-helper",
 	"engines": {
 		"vscode": "^1.63.0"
 	},
@@ -55,7 +57,7 @@
 					"id": "nodeDependencies",
 					"name": "Node Dependencies",
 					"icon": "media/dep.svg",
-					"contextualTitle": "Package Explorer"
+					"contextualTitle": "Lang Menu"
 				}
 			]
 		},
@@ -91,7 +93,7 @@
 			"activitybar": [
 				{
 					"id": "package-explorer",
-					"title": "Package Explorer",
+					"title": "Lang Menu",
 					"icon": "media/dep.svg"
 				}
 			]
