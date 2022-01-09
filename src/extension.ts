@@ -6,7 +6,8 @@ import util = require('util');
 
 
 import { NodeDependenciesProvider } from './nodeDependencies';
-
+// import clipboard from 'clipboardy';
+var ncp = require("copy-paste");
 
 
 export function activate(context: vscode.ExtensionContext): void {
@@ -21,10 +22,16 @@ export function activate(context: vscode.ExtensionContext): void {
 	
 	
 	// Tree view - Dev
-	const nodeDependenciesProvider = new NodeDependenciesProvider(vscode.workspace.rootPath);
+	const nodeDependenciesProvider = new NodeDependenciesProvider(vscode.workspace.rootPath, context);
 	vscode.window.registerTreeDataProvider('nodeDependencies', nodeDependenciesProvider);
 	vscode.commands.registerCommand('nodeDependencies.refreshEntry', () =>
 		nodeDependenciesProvider.refresh()
+	);
+	vscode.commands.registerCommand('nodeDependencies.clean', () =>
+		nodeDependenciesProvider.clean()
+	);
+	vscode.commands.registerCommand('nodeDependencies.copy', () =>
+		nodeDependenciesProvider.copy()
 	);
 
 	// vscode.window.registerTreeDataProvider(
@@ -64,10 +71,24 @@ export function activate(context: vscode.ExtensionContext): void {
 			var final_word = "<?=lang('" + new_word + "')?>";
 			var final_word_in_php = "lang('" + new_word + "')";
 
+
 			// copy to clipboard
 			// require('child_process').spawn('clip').stdin.end(util.inspect(word));
 			var lang_output = '$lang["' + new_word + '"] = "' + word +'";';
-			require('child_process').spawn('clip').stdin.end(lang_output);	// fix utf-8
+			// require('child_process').spawn('clip').stdin.end(lang_output);	// fix utf-8
+			// clipboard.write(lang_output);
+			var array_test = ['karakara', 'onur'];
+			var other_test = 'karakara\nonur';
+			// ncp.copy(other_test);
+
+			// save it to global state			
+			context.globalState.update(new_word, lang_output);
+			console.log(context.globalState.keys())
+			// context.globalState.update(new_word, undefined); // delete
+
+			// Let's refresh menu here
+			nodeDependenciesProvider.refresh();
+			// nodeDependenciesProvider.clean();
 
 
 			editor.edit(editBuilder => {

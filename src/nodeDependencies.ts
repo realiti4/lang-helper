@@ -1,15 +1,48 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+var ncp = require("copy-paste");
 
 export class NodeDependenciesProvider implements vscode.TreeDataProvider<Dependency> {
-	constructor(private workspaceRoot: string) { }
+
+	context: vscode.ExtensionContext;
+
+	constructor(private workspaceRoot: string, context: vscode.ExtensionContext) {
+		this.context = context;
+	}
+
+	private _onDidChangeTreeData: vscode.EventEmitter<Dependency | undefined | null | void> = new vscode.EventEmitter<Dependency | undefined | null | void>();
+	readonly onDidChangeTreeData: vscode.Event<Dependency | undefined | null | void> = this._onDidChangeTreeData.event;
+
+	refresh(): void {
+		this._onDidChangeTreeData.fire();
+	}
+
+	clean(): void {
+		Object.entries(this.context.globalState.keys()).forEach(([i,v]) => {
+			this.context.globalState.update(v, undefined);
+		})
+		this.refresh();
+	}
+
+	copy(): void {
+		var clipboard = '';
+		Object.entries(this.context.globalState.keys()).forEach(([i,v]) => {
+			clipboard += this.context.globalState.get(v);
+			clipboard += '\n';
+		})
+		ncp.copy(clipboard);
+	}
 
 	getTreeItem(element: Dependency): vscode.TreeItem {
 		return element;
 	}
 
 	getChildren(element?: Dependency): Thenable<Dependency[]> {
+
+		// Dev
+		return Promise.resolve(this.getstateEntries());
+
 		if (!this.workspaceRoot) {
 			vscode.window.showInformationMessage('No dependency in empty workspace');
 			return Promise.resolve([]);
@@ -32,13 +65,29 @@ export class NodeDependenciesProvider implements vscode.TreeDataProvider<Depende
 		}
 	}
 
-	private _onDidChangeTreeData: vscode.EventEmitter<Dependency | undefined | null | void> = new vscode.EventEmitter<Dependency | undefined | null | void>();
-	readonly onDidChangeTreeData: vscode.Event<Dependency | undefined | null | void> = this._onDidChangeTreeData.event;
 
-	refresh(): void {
-		this._onDidChangeTreeData.fire();
+	private getstateEntries(): Dependency[] {
+		const toDep = (moduleName: string, version: string): Dependency => {
+			if (this.pathExists(path.join(this.workspaceRoot, 'node_modules', moduleName))) {
+				return new Dependency(
+					moduleName,
+					version,
+					vscode.TreeItemCollapsibleState.Collapsed
+				);
+			} else {
+				return new Dependency(moduleName, version, vscode.TreeItemCollapsibleState.None);
+			}
+		};
+
+		const devEntries = this.context.globalState._value
+			? Object.keys(this.context.globalState._value).map(dep =>
+				toDep(dep, this.context.globalState._value[dep])
+				)
+				: [];
+		
+		return devEntries;
 	}
-
+	
 	/**
 	 * Given the path to package.json, read all its dependencies and devDependencies.
 	 */
