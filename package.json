@@ -2,7 +2,7 @@
 	"name": "lang-helper",
 	"displayName": "Codeigniter Lang Helper",
 	"description": "Lang Helper",
-	"version": "0.1.0",
+	"version": "0.1.3",
 	"publisher": "realiti",
 	"repository": "https://github.com/realiti4/lang-helper",
 	"engines": {
